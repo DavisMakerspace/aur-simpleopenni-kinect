@@ -1,0 +1,26 @@
+MODULES=(libnimMockNodes.so libnimCodecs.so libnimRecorder.so)
+KINECT_MODULES=(libXnDeviceSensorV2KM.so libXnDeviceFile.so)
+
+post_install() {
+  for module in "${MODULES[@]}"; do
+		/usr/bin/niReg -r /usr/lib/$module
+	done
+  /usr/bin/niReg -r /usr/lib/libXnVFeatures_1_5_2.so /etc/primesense/Features
+  /usr/bin/niReg -r /usr/lib/libXnVHandGenerator_1_5_2.so /etc/primesense/Hands
+  /usr/bin/niLicense -r PrimeSense 0KOIk2JeIBYClPWVnMoRKn5cdY4=
+  for module in "${KINECT_MODULES[@]}"; do
+    /usr/bin/niReg -r /usr/lib/$module /etc/primesense
+  done
+}
+
+pre_remove() {
+  for module in "${KINECT_MODULES[@]}"; do
+    /usr/bin/niReg -u /usr/lib/$module
+  done
+  /usr/bin/niLicense -u PrimeSense 0KOIk2JeIBYClPWVnMoRKn5cdY4=
+  /usr/bin/niReg -u /usr/lib/libXnVHandGenerator_1_5_2.so
+  /usr/bin/niReg -u /usr/lib/libXnVFeatures_1_5_2.so
+  for module in "${MODULES[@]}"; do
+		/usr/bin/niReg -u /usr/lib/$module
+	done
+}
